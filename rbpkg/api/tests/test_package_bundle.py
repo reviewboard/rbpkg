@@ -25,6 +25,14 @@ class PackageBundleTests(PackagesTestCase):
                 ],
                 'created_timestamp': '2015-10-10T08:17:29.958569',
                 'last_updated_timestamp': '2015-10-15T08:17:29.958569',
+                'current_version': '1.0.5',
+                'package_names': [
+                    {
+                        'system': ['centos', 'rhel'],
+                        'name': 'reviewboard',
+                        'type': 'rpm',
+                    },
+                ],
                 'channel_aliases': {
                     'stable': '1.0.x',
                     'beta': '2.0.x',
@@ -59,10 +67,20 @@ class PackageBundleTests(PackagesTestCase):
                          '\n'
                          'This is the multi-line\n'
                          'description.')
+        self.assertEqual(bundle.current_version, '1.0.5')
         self.assertEqual(bundle.created_timestamp,
                          datetime(2015, 10, 10, 8, 17, 29, 958569))
         self.assertEqual(bundle.last_updated_timestamp,
                          datetime(2015, 10, 15, 8, 17, 29, 958569))
+        self.assertEqual(
+            bundle.package_names,
+            [
+                {
+                    'system': ['centos', 'rhel'],
+                    'name': 'reviewboard',
+                    'type': 'rpm',
+                },
+            ])
         self.assertEqual(
             bundle.channel_aliases,
             {
@@ -115,6 +133,8 @@ class PackageBundleTests(PackagesTestCase):
                          datetime(2015, 10, 10, 8, 17, 29, 958569))
         self.assertEqual(bundle.last_updated_timestamp,
                          datetime(2015, 10, 15, 8, 17, 29, 958569))
+        self.assertEqual(bundle.current_version, None)
+        self.assertEqual(bundle.package_names, [])
         self.assertEqual(bundle.channel_aliases, {})
 
         # The exact details will be compared in a later unit test. Just
@@ -126,14 +146,24 @@ class PackageBundleTests(PackagesTestCase):
     def test_serialize(self):
         """Testing PackageBundle.serialize"""
         bundle = PackageBundle(
+            manifest_url='packages/TestPackage/index.json',
             name='TestPackage',
             description='This is a summary.\n\nThis is a description.',
             created_timestamp=datetime(2015, 10, 10, 8, 17, 29, 958569),
             last_updated_timestamp=datetime(2015, 10, 15, 8, 17, 29, 958569),
+            current_version='1.0.0',
             channel_aliases={
                 'stable': '1.0.x',
                 'beta': '2.0.x',
-            })
+            },
+            package_names=[
+                {
+                    'system': ['centos', 'rhel'],
+                    'name': 'reviewboard',
+                    'type': 'rpm',
+                },
+            ])
+        bundle._loaded = True
 
         channel = PackageChannel(
             bundle=bundle,
@@ -144,7 +174,7 @@ class PackageBundleTests(PackagesTestCase):
             current=True,
             visible=True,
             manifest_url='1.0.x.json')
-        bundle.channels = [channel]
+        bundle._channels = [channel]
 
         self.assertEqual(
             bundle.serialize(),
@@ -158,6 +188,14 @@ class PackageBundleTests(PackagesTestCase):
                 ],
                 'created_timestamp': '2015-10-10T08:17:29.958569',
                 'last_updated_timestamp': '2015-10-15T08:17:29.958569',
+                'current_version': '1.0.0',
+                'package_names': [
+                    {
+                        'system': ['centos', 'rhel'],
+                        'name': 'reviewboard',
+                        'type': 'rpm',
+                    },
+                ],
                 'channel_aliases': {
                     'stable': '1.0.x',
                     'beta': '2.0.x',

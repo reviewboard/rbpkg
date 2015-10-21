@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import dateutil.parser
+from six.moves.urllib.parse import urljoin
 
 from rbpkg.api.loaders import get_data_loader
 from rbpkg.api.package_release import PackageRelease
@@ -115,21 +116,14 @@ class PackageChannel(object):
         """
         self.bundle = bundle
         self.manifest_url = manifest_url
+        self.absolute_manifest_url = urljoin(bundle.absolute_manifest_url,
+                                             manifest_url)
         self.name = name
         self.created_timestamp = created_timestamp
         self.last_updated_timestamp = last_updated_timestamp
         self.latest_version = latest_version
         self.current = current
         self.visible = visible
-
-        if (self.manifest_url and bundle.manifest_url and
-            not self.manifest_url.startswith(('http', '/'))):
-            self.absolute_manifest_url = '%s/%s' % (
-                '/'.join(bundle.manifest_url.split('/')[:-1]),
-                self.manifest_url)
-        else:
-            self.absolute_manifest_url = manifest_url
-
         self._loaded = False
         self._releases = []
         self._package_rules = []
@@ -209,7 +203,7 @@ class PackageChannel(object):
         instance, allowing the caller to access it.
         """
         # Let the exceptions bubble up.
-        data = get_data_loader().load_by_path(self.manifest_url)
+        data = get_data_loader().load_by_path(self.absolute_manifest_url)
 
         self._releases = []
         self._package_rules = []
