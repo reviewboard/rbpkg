@@ -12,6 +12,7 @@ from rbpkg import get_package_version
 PACKAGE_NAME = 'rbpkg'
 
 install_requires = [
+    'colorlog',
     'pip>=7.1.2',
     'python-dateutil',
     'six>=1.8.0',

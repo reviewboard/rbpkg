@@ -7,6 +7,8 @@ import platform
 import sys
 import textwrap
 
+from colorlog import ColoredFormatter
+
 from rbpkg import get_version_string
 
 
@@ -27,6 +29,12 @@ class LogLevelFilter(logging.Filter):
 
 class BaseCommand(object):
     """Base class for a rbpkg command."""
+
+    SECONDARY_LOG_COLORS = {
+        'message': {
+            'OK': 'green',
+        },
+    }
 
     def main(self):
         raise NotImplementedError
@@ -96,10 +104,23 @@ class BaseCommand(object):
         """
         root = logging.getLogger()
 
+        if sys.stderr.isatty():
+            debug_formatter = ColoredFormatter(
+                '%(cyan)s>>> [%(name)s] %(message)s')
+            info_formatter = ColoredFormatter(
+                '%(message)s',
+                secondary_log_colors=self.SECONDARY_LOG_COLORS)
+            level_formatter = ColoredFormatter(
+                '%(log_color)s%(levelname)s:%(reset)s %(message)s',
+                secondary_log_colors=self.SECONDARY_LOG_COLORS)
+        else:
+            debug_formatter = logging.Formatter('>>> [%(name)s] %(message)s')
+            info_formatter = logging.Formatter('%(message)s')
+            level_formatter = logging.Formatter('%(levelname)s: %(message)s')
+
         if debug:
             handler = logging.StreamHandler()
-            handler.setFormatter(
-                logging.Formatter('>>> [%(name)s] %(message)s'))
+            handler.setFormatter(debug_formatter)
             handler.setLevel(logging.DEBUG)
             handler.addFilter(LogLevelFilter(logging.DEBUG))
             root.addHandler(handler)
@@ -110,7 +131,7 @@ class BaseCommand(object):
 
         # Handler for info messages. We'll treat these like prints.
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter('%(message)s'))
+        handler.setFormatter(info_formatter)
         handler.setLevel(logging.INFO)
         handler.addFilter(LogLevelFilter(logging.INFO))
         root.addHandler(handler)
@@ -118,7 +139,7 @@ class BaseCommand(object):
         # Handler for warnings, errors, and criticals. They'll show the
         # level prefix and the message.
         handler = logging.StreamHandler()
-        handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
+        handler.setFormatter(level_formatter)
         handler.setLevel(logging.WARNING)
         root.addHandler(handler)
 
