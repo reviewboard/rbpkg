@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 import dateutil.parser
 from six.moves.urllib.parse import urljoin
 
-from rbpkg.api.loaders import get_data_loader
-from rbpkg.api.package_channel import PackageChannel
+from rbpkg.repository.loaders import get_data_loader
+from rbpkg.repository.package_channel import PackageChannel
 
 
 FORMAT_VERSION = '1.0'
@@ -46,8 +46,8 @@ class PackageBundle(object):
             * ``name``: The package name.
 
             See the attributes on
-            :py:class:`~rbpkg.api.package_rules.PackageRules` for explanations
-            on these values.
+            :py:class:`~rbpkg.repository.package_rules.PackageRules` for
+            explanations of these values.
     """
 
     @classmethod
@@ -187,7 +187,7 @@ class PackageBundle(object):
         """Serialize the package bundle for the package index.
 
         The resulting output can be consumed into a
-        :py:class:`~rbpkg.api.package_index.PackageIndex` payload.
+        :py:class:`~rbpkg.repository.package_index.PackageIndex` payload.
 
         Returns:
             dict:

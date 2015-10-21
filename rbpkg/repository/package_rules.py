@@ -11,7 +11,7 @@ class PackageRules(object):
     Each rule may match one or more versions by specifying a version range.
 
     Attributes:
-        channel (rbpkg.api.package_channel.PackageChannel):
+        channel (rbpkg.repository.package_channel.PackageChannel):
             The channel this version is a part.
 
         version_range (unicode):
@@ -82,7 +82,7 @@ class PackageRules(object):
         """Deserialize a payload into a PackageRules.
 
         Args:
-            channel (rbpkg.api.package_channel.PackageChannel):
+            channel (rbpkg.repository.package_channel.PackageChannel):
                 The channel that contains this set of rules.
 
             data (dict):
@@ -119,7 +119,7 @@ class PackageRules(object):
         """Initialize the package rules.
 
         Args:
-            channel (rbpkg.api.package_channel.PackageChannel):
+            channel (rbpkg.repository.package_channel.PackageChannel):
                 The channel that contains this set of rules.
 
             version_range (unicode):

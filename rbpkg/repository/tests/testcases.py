@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from unittest import TestCase
 
-from rbpkg.api.loaders import InMemoryPackageDataLoader, set_data_loader
+from rbpkg.repository.loaders import InMemoryPackageDataLoader, set_data_loader
 
 
 class PackagesTestCase(TestCase):

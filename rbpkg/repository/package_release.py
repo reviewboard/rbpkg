@@ -9,7 +9,7 @@ class PackageRelease(object):
     URL to release notes.
 
     Attributes:
-        channel (rbpkg.api.package_channel.PackageChannel):
+        channel (rbpkg.repository.package_channel.PackageChannel):
             The channel this release is a part.
 
         version (unicode):
@@ -50,7 +50,7 @@ class PackageRelease(object):
         releases or package rules.
 
         Args:
-            package_channel (rbpkg.api.package_channel.PackageChannel):
+            package_channel (rbpkg.repository.package_channel.PackageChannel):
                 The package channel owning this release.
 
             data (dict):
@@ -72,7 +72,7 @@ class PackageRelease(object):
         """Initialize the release.
 
         Args:
-            channel (rbpkg.api.package_channel.PackageChannel):
+            channel (rbpkg.repository.package_channel.PackageChannel):
                 The channel this release is a part of.
 
             version (unicode):

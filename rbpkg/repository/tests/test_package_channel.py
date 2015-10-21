@@ -2,15 +2,15 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 
-from rbpkg.api.package_bundle import PackageBundle
-from rbpkg.api.package_channel import PackageChannel
-from rbpkg.api.package_release import PackageRelease
-from rbpkg.api.package_rules import PackageRules
-from rbpkg.api.tests.testcases import PackagesTestCase
+from rbpkg.repository.package_bundle import PackageBundle
+from rbpkg.repository.package_channel import PackageChannel
+from rbpkg.repository.package_release import PackageRelease
+from rbpkg.repository.package_rules import PackageRules
+from rbpkg.repository.tests.testcases import PackagesTestCase
 
 
 class PackageChannelTests(PackagesTestCase):
-    """Unit tests for rbpkg.api.package.PackageChannel."""
+    """Unit tests for rbpkg.repository.package.PackageChannel."""
 
     def test_deserialize_with_all_info(self):
         """Testing PackageChannel.deserialize with all available info"""

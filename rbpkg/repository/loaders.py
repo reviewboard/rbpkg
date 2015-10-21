@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 import json
 import os
 
-from rbpkg.api.errors import ConfigurationError, LoadDataError
+from rbpkg.repository.errors import ConfigurationError, LoadDataError
 
 
 _data_loader = None
@@ -30,11 +30,11 @@ class PackageDataLoader(object):
             dict: The loaded data from that path, if found.
 
         Raises:
-            rbpkg.api.errors.ConfigurationError:
+            rbpkg.repository.errors.ConfigurationError:
                 Indicates a problem with the configuration of rbpkg or its
                 environment.
 
-            rbpkg.api.errors.LoadDataError:
+            rbpkg.repository.errors.LoadDataError:
                 Error loading or parsing data from the path.
         """
         raise NotImplementedError

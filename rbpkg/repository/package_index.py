@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import dateutil.parser
 from six.moves.urllib.parse import urljoin
 
-from rbpkg.api.package_bundle import PackageBundle
+from rbpkg.repository.package_bundle import PackageBundle
 
 
 FORMAT_VERSION = '1.0'

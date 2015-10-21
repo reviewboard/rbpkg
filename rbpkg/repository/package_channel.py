@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 import dateutil.parser
 from six.moves.urllib.parse import urljoin
 
-from rbpkg.api.loaders import get_data_loader
-from rbpkg.api.package_release import PackageRelease
-from rbpkg.api.package_rules import PackageRules
+from rbpkg.repository.loaders import get_data_loader
+from rbpkg.repository.package_release import PackageRelease
+from rbpkg.repository.package_rules import PackageRules
 
 
 FORMAT_VERSION = '1.0'
@@ -17,13 +17,13 @@ class PackageChannel(object):
     A channel is a named container of releases that may represent a specific
     range of versions ("1.0.x", "1.1.x", etc.) or a general set ("beta"),
     though the latter is generally accomplished through aliases in the
-    :py:class:`package bundle <rbpkg.api.bundle.PackageBundle>`.
+    :py:class:`package bundle <rbpkg.repository.bundle.PackageBundle>`.
 
     Each channel entry further contains all the specific releases that can
     be installed.
 
     Attributes:
-        bundle (rbpkg.api.bundle.PackageBundle):
+        bundle (rbpkg.repository.bundle.PackageBundle):
             The bundle that owns the channel.
 
         manifest_url (unicode):
@@ -62,7 +62,7 @@ class PackageChannel(object):
         releases or package rules.
 
         Args:
-            bundle (rbpkg.api.bundle.PackageBundle):
+            bundle (rbpkg.repository.bundle.PackageBundle):
                 The package bundle owning this channel.
 
             data (dict):
@@ -89,7 +89,7 @@ class PackageChannel(object):
         """Initialize the channel.
 
         Args:
-            bundle (rbpkg.api.bundle.PackageBundle):
+            bundle (rbpkg.repository.bundle.PackageBundle):
                 The package bundle owning this channel.
 
             manifest_url (unicode):

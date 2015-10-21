@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 
-from rbpkg.api.loaders import get_data_loader
-from rbpkg.api.package_bundle import PackageBundle
-from rbpkg.api.package_index import PackageIndex
+from rbpkg.repository.loaders import get_data_loader
+from rbpkg.repository.package_bundle import PackageBundle
+from rbpkg.repository.package_index import PackageIndex
 
 
 class PackageRepository(object):
@@ -20,7 +20,7 @@ class PackageRepository(object):
         """Return the root package index from the repository.
 
         Returns:
-            rbpkg.api.package_index.PackageIndex:
+            rbpkg.repository.package_index.PackageIndex:
             The root package index.
         """
         if not self._index:

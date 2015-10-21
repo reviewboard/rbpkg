@@ -1,13 +1,13 @@
 from __future__ import unicode_literals
 
-from rbpkg.api.package_bundle import PackageBundle
-from rbpkg.api.package_channel import PackageChannel
-from rbpkg.api.package_rules import PackageRules
-from rbpkg.api.tests.testcases import PackagesTestCase
+from rbpkg.repository.package_bundle import PackageBundle
+from rbpkg.repository.package_channel import PackageChannel
+from rbpkg.repository.package_rules import PackageRules
+from rbpkg.repository.tests.testcases import PackagesTestCase
 
 
 class PackageRulesTests(PackagesTestCase):
-    """Unit tests for rbpkg.api.package.PackageRules."""
+    """Unit tests for rbpkg.repository.package.PackageRules."""
 
     def test_deserialize_with_all_info(self):
         """Testing PackageRules.deserialize with all available info"""
