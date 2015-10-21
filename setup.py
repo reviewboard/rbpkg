@@ -13,6 +13,7 @@ PACKAGE_NAME = 'rbpkg'
 
 install_requires = [
     'pip>=7.1.2',
+    'python-dateutil',
     'six>=1.8.0',
 ]
 
