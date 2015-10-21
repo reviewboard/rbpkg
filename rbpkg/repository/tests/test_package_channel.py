@@ -141,7 +141,7 @@ class PackageChannelTests(PackagesTestCase):
 
         channel = PackageChannel(
             bundle,
-            manifest_url='packages/TestPackage/1.0.x.json')
+            manifest_url='1.0.x.json')
         channel.load()
 
         self.assertEqual(channel.created_timestamp,

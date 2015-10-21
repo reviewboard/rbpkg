@@ -13,7 +13,8 @@ class PackageBundleTests(PackagesTestCase):
     def test_deserialize_with_all_info(self):
         """Testing PackageBundle.deserialize with all available info"""
         bundle = PackageBundle.deserialize(
-            'packages/TestPackage/index.json',
+            '/packages/',
+            'TestPackage/index.json',
             {
                 'format_version': '1.0',
                 'name': 'TestPackage',
@@ -60,7 +61,9 @@ class PackageBundleTests(PackagesTestCase):
             })
 
         self.assertEqual(bundle.manifest_url,
-                         'packages/TestPackage/index.json')
+                         'TestPackage/index.json')
+        self.assertEqual(bundle.absolute_manifest_url,
+                         '/packages/TestPackage/index.json')
         self.assertEqual(bundle.name, 'TestPackage')
         self.assertEqual(bundle.description,
                          'This is the summary.\n'
@@ -97,7 +100,8 @@ class PackageBundleTests(PackagesTestCase):
     def test_deserialize_with_minimal_info(self):
         """Testing PackageBundle.deserialize with minimum info"""
         bundle = PackageBundle.deserialize(
-            'packages/TestPackage/index.json',
+            '/packages/',
+            'TestPackage/index.json',
             {
                 'format_version': '1.0',
                 'name': 'TestPackage',
@@ -126,7 +130,9 @@ class PackageBundleTests(PackagesTestCase):
             })
 
         self.assertEqual(bundle.manifest_url,
-                         'packages/TestPackage/index.json')
+                         'TestPackage/index.json')
+        self.assertEqual(bundle.absolute_manifest_url,
+                         '/packages/TestPackage/index.json')
         self.assertEqual(bundle.name, 'TestPackage')
         self.assertEqual(bundle.description, None)
         self.assertEqual(bundle.created_timestamp,
