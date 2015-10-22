@@ -1,8 +1,7 @@
 from __future__ import unicode_literals
 
-from unittest import TestCase
-
 from rbpkg.repository.loaders import InMemoryPackageDataLoader, set_data_loader
+from rbpkg.testing.testcases import TestCase
 
 
 class PackagesTestCase(TestCase):
