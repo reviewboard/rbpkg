@@ -3,11 +3,16 @@ from __future__ import unicode_literals
 import re
 import unittest
 
+from rbpkg.repository.package_repo import get_repository
+
 
 class TestCase(unittest.TestCase):
     """Base class for test cases."""
 
     ws_re = re.compile(r'\s+')
+
+    def tearDown(self):
+        get_repository().clear_caches()
 
     def shortDescription(self):
         """Return the description of the current test.

@@ -5,6 +5,9 @@ from rbpkg.repository.package_bundle import PackageBundle
 from rbpkg.repository.package_index import PackageIndex
 
 
+_repository = None
+
+
 class PackageRepository(object):
     """Interface with packages on the package repository.
 
@@ -13,6 +16,14 @@ class PackageRepository(object):
     """
 
     def __init__(self):
+        self._package_bundle_cache = {}
+        self._index = None
+
+    def clear_caches(self):
+        """Clear all caches.
+
+        Any subsequent lookups of packages will re-fetch from the repository.
+        """
         self._package_bundle_cache = {}
         self._index = None
 
@@ -75,3 +86,18 @@ class PackageRepository(object):
             The path to the main package index within the repository.
         """
         return 'packages/index.json'
+
+
+def get_repository():
+    """Return the shared instance of the package repository.
+
+    Returns:
+        PackageRepository:
+        The package repository.
+    """
+    global _repository
+
+    if not _repository:
+        _repository = PackageRepository()
+
+    return _repository
