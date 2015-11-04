@@ -5,6 +5,7 @@ from six.moves.urllib.parse import urljoin
 
 from rbpkg.repository.loaders import get_data_loader
 from rbpkg.repository.package_channel import PackageChannel
+from rbpkg.utils.matches import matches_version_range
 
 
 FORMAT_VERSION = '1.0'
@@ -189,6 +190,45 @@ class PackageBundle(object):
         for channel in self.channels:
             if channel.current:
                 return channel
+
+        return None
+
+    def get_latest_release_for_version_range(self, version_range,
+                                             channel_types=None,
+                                             release_types=None):
+        """Return the latest release that satisfies the given version range.
+
+        All visible channels will be searched in order from newest to oldest.
+        The first one that contains a release matching the given range will
+        be returned.
+
+        Args:
+            version_range (unicode):
+                The version or version range to limit releases to.
+
+            channel_types (list, optional):
+                The optional list of channel types to limit channels to.
+
+            release_types (list, optional):
+                The optional list of release types to limit releases to.
+
+        Returns:
+            rbpkg.repository.package_release.PackageRelease:
+            The release matching the given criteria, if found. ``None`` will
+            be returned if no release matches.
+        """
+        version_range = self.name + version_range
+
+        for channel in self.channels:
+            if (not channel.visible or
+                (channel_types and channel.channel_type not in channel_types)):
+                continue
+
+            for release in channel.releases:
+                if ((not release_types or
+                     release.release_type in release_types) and
+                    matches_version_range(release.version, version_range)):
+                    return release
 
         return None
 

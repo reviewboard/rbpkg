@@ -4,6 +4,7 @@ from datetime import datetime
 
 from rbpkg.repository.package_bundle import PackageBundle
 from rbpkg.repository.package_channel import PackageChannel
+from rbpkg.repository.package_release import PackageRelease
 from rbpkg.repository.tests.testcases import PackagesTestCase
 
 
@@ -212,6 +213,7 @@ class PackageBundleTests(PackagesTestCase):
                         'created_timestamp': '2015-10-11T08:17:29.958569',
                         'last_updated_timestamp': '2015-10-12T08:17:29.958569',
                         'latest_version': '1.0.0',
+                        'channel_type': 'release',
                         'current': True,
                         'visible': True,
                         'manifest_file': '1.0.x.json',
@@ -260,3 +262,99 @@ class PackageBundleTests(PackagesTestCase):
         bundle._channels = [channel]
 
         self.assertEqual(bundle.current_channel, None)
+
+    def test_get_latest_release_for_version_range(self):
+        """Testing PackageBundle.get_latest_release_for_version_range"""
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json',
+                               name='MyPackage')
+        bundle._loaded = True
+
+        channel = PackageChannel(bundle=bundle, name='staging', current=True)
+        channel._loaded = True
+        bundle._channels = [channel]
+
+        release1 = PackageRelease(channel=channel, version='1.5')
+        release2 = PackageRelease(channel=channel, version='1.0')
+        channel._releases = [release1, release2]
+
+        self.assertEqual(
+            bundle.get_latest_release_for_version_range('>=1.0'),
+            release1)
+        self.assertEqual(
+            bundle.get_latest_release_for_version_range('<1.0'),
+            None)
+
+    def test_get_latest_release_for_version_range_with_channel_types(self):
+        """Testing PackageBundle.get_latest_release_for_version_range with
+        channel_types
+        """
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json',
+                               name='MyPackage')
+        bundle._loaded = True
+
+        channel1 = PackageChannel(
+            bundle=bundle,
+            name='2.0.x',
+            current=False,
+            channel_type=PackageChannel.CHANNEL_TYPE_PRERELEASE)
+        channel1._loaded = True
+        channel2 = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            current=True,
+            channel_type=PackageChannel.CHANNEL_TYPE_RELEASE)
+        channel2._loaded = True
+        bundle._channels = [channel1, channel2]
+
+        release1 = PackageRelease(channel=channel1, version='2.0')
+        channel1._releases = [release1]
+
+        release2 = PackageRelease(channel=channel2, version='1.0')
+        channel2._releases = [release2]
+
+        self.assertEqual(
+            bundle.get_latest_release_for_version_range(
+                version_range='>=1.0',
+                channel_types=[PackageChannel.CHANNEL_TYPE_RELEASE]),
+            release2)
+        self.assertEqual(
+            bundle.get_latest_release_for_version_range(
+                '>=2.0',
+                channel_types=[PackageChannel.CHANNEL_TYPE_RELEASE]),
+            None)
+
+    def test_get_latest_release_for_version_range_with_release_types(self):
+        """Testing PackageBundle.get_latest_release_for_version_range with
+        release_types
+        """
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json',
+                               name='MyPackage')
+        bundle._loaded = True
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='2.0.x',
+            current=False)
+        channel._loaded = True
+        bundle._channels = [channel]
+
+        release1 = PackageRelease(
+            channel=channel,
+            version='2.0',
+            release_type=PackageRelease.TYPE_BETA)
+        release2 = PackageRelease(
+            channel=channel,
+            version='1.0',
+            release_type=PackageRelease.TYPE_STABLE)
+        channel._releases = [release1, release2]
+
+        self.assertEqual(
+            bundle.get_latest_release_for_version_range(
+                version_range='>=1.0',
+                release_types=[PackageRelease.TYPE_STABLE]),
+            release2)
+        self.assertEqual(
+            bundle.get_latest_release_for_version_range(
+                '>=1.0',
+                release_types=[PackageRelease.TYPE_ALPHA]),
+            None)

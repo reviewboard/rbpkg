@@ -53,6 +53,7 @@ class PackageChannelTests(SpyAgency, PackagesTestCase):
             created_timestamp=datetime(2015, 10, 11, 8, 17, 29, 958569),
             last_updated_timestamp=datetime(2015, 10, 12, 8, 17, 29, 958569),
             latest_version='1.0.0',
+            channel_type=PackageChannel.CHANNEL_TYPE_PRERELEASE,
             current=True,
             visible=True,
             manifest_url='1.0.x.json')
@@ -64,6 +65,7 @@ class PackageChannelTests(SpyAgency, PackagesTestCase):
                 'created_timestamp': '2015-10-11T08:17:29.958569',
                 'last_updated_timestamp': '2015-10-12T08:17:29.958569',
                 'latest_version': '1.0.0',
+                'channel_type': 'prerelease',
                 'current': True,
                 'visible': True,
                 'manifest_file': '1.0.x.json',

@@ -44,6 +44,10 @@ class PackageChannel(object):
         latest_version (unicode):
             The latest visible version in the channel.
 
+        channel_type (unicode):
+            The channel type. One of :py:attr:`CHANNEL_TYPE_PRERELEASE` or
+            :py:attr:`CHANNEL_TYPE_RELEASE`.
+
         current (bool):
             Whether this is the current channel of releases to install by
             default.
@@ -51,6 +55,12 @@ class PackageChannel(object):
         visible (bool):
             Whether this channel is visible.
     """
+
+    #: Pre-release channel.
+    CHANNEL_TYPE_PRERELEASE = 'prerelease'
+
+    #: Release channel.
+    CHANNEL_TYPE_RELEASE = 'release'
 
     @classmethod
     def deserialize(cls, bundle, data):
@@ -80,12 +90,14 @@ class PackageChannel(object):
             last_updated_timestamp=dateutil.parser.parse(
                 data['last_updated_timestamp']),
             latest_version=data['latest_version'],
+            channel_type=data.get('type', cls.CHANNEL_TYPE_RELEASE),
             current=data.get('current', False),
             visible=data.get('visible', True))
 
     def __init__(self, bundle, manifest_url=None, name=None,
                  created_timestamp=None, last_updated_timestamp=None,
-                 latest_version=None, current=False, visible=True):
+                 latest_version=None, channel_type=CHANNEL_TYPE_RELEASE,
+                 current=False, visible=True):
         """Initialize the channel.
 
         Args:
@@ -107,6 +119,10 @@ class PackageChannel(object):
             latest_version (unicode):
                 The latest visible version in the channel.
 
+            channel_type (unicode):
+                The channel type. One of :py:attr:`CHANNEL_TYPE_PRERELEASE` or
+                :py:attr:`CHANNEL_TYPE_RELEASE`.
+
             current (bool):
                 Whether this is the current channel of releases to install by
                 default.
@@ -123,6 +139,7 @@ class PackageChannel(object):
         self.last_updated_timestamp = last_updated_timestamp
         self.latest_version = latest_version
         self.current = current
+        self.channel_type = channel_type
         self.visible = visible
         self._loaded = False
         self._releases = []
@@ -200,6 +217,7 @@ class PackageChannel(object):
             'created_timestamp': self.created_timestamp.isoformat(),
             'last_updated_timestamp': self.last_updated_timestamp.isoformat(),
             'latest_version': self.latest_version,
+            'channel_type': self.channel_type,
             'current': self.current,
             'visible': self.visible,
             'manifest_file': self.manifest_url,
@@ -260,7 +278,8 @@ class PackageChannel(object):
 
     def __repr__(self):
         return (
-            '<PackageChannel(%s; latest_version=%s; current=%s; '
-            'visible=%s)>'
-            % (self.name, self.latest_version, self.current, self.visible)
+            '<PackageChannel(%s; channel_type=%s; latest_version=%s; '
+            'current=%s; visible=%s)>'
+            % (self.name, self.channel_type, self.latest_version,
+               self.current, self.visible)
         )
