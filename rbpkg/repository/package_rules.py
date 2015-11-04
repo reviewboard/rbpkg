@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from rbpkg.utils.matches import matches_current_system, matches_version_range
+
 
 class PackageRules(object):
     """A set of rules for installing and managing packages.
@@ -186,6 +188,30 @@ class PackageRules(object):
         self.post_install_commands = post_install_commands or []
         self.install_flags = install_flags or []
         self.uninstall_commands = uninstall_commands or []
+
+    def matches_version(self, version, require_current_system=True):
+        """Return whether these rules match the given version.
+
+        By default, this will also check if it matches the current system.
+
+        Args:
+            version (unicode):
+                The version to restrict rules to.
+
+            require_current_system (bool):
+                If set, only rules valid for the current system will be
+                returned.
+
+        Returns:
+            bool:
+            ``True`` if this set of rules matches the given criteria.
+        """
+        version_range = self.package_name + self.version_range
+
+        return ((self.version_range == '*' or
+                 matches_version_range(version, version_range)) and
+                (not require_current_system or
+                 matches_current_system(self.systems)))
 
     def serialize(self):
         """Serialize the package rules into a JSON-serializable format.

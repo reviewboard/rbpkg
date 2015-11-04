@@ -183,6 +183,15 @@ class PackageBundle(object):
 
         return self._channels
 
+    @property
+    def current_channel(self):
+        """The current channel in the package bundle."""
+        for channel in self.channels:
+            if channel.current:
+                return channel
+
+        return None
+
     def serialize_index_entry(self):
         """Serialize the package bundle for the package index.
 

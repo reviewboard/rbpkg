@@ -152,6 +152,39 @@ class PackageChannel(object):
 
         return self._package_rules
 
+    @property
+    def latest_release(self):
+        """Information on the latest release."""
+        try:
+            return self.releases[0]
+        except IndexError:
+            return None
+
+    def get_all_rules_for_version(self, version, require_current_system=True):
+        """Return lists of rules for the given version.
+
+        By default, the returned rules will only be those that are valid
+        for the current system.
+
+        Args:
+            version (unicode):
+                The version to restrict rules to.
+
+            require_current_system (bool):
+                If set, only rules valid for the current system will be
+                returned.
+
+        Returns:
+            list:
+            A list of :py:class:`~rbpkg.repository.package_rules.PackageRules`
+            for the given version.
+        """
+        return [
+            rules
+            for rules in self.package_rules
+            if rules.matches_version(version, require_current_system)
+        ]
+
     def serialize_package_entry(self):
         """Serialize the channel for inclusion in the package bundle.
 

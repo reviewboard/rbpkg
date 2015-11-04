@@ -1,12 +1,17 @@
 from __future__ import unicode_literals
 
+import platform
+from datetime import datetime
+
+from kgb import SpyAgency
+
 from rbpkg.repository.package_bundle import PackageBundle
 from rbpkg.repository.package_channel import PackageChannel
 from rbpkg.repository.package_rules import PackageRules
 from rbpkg.repository.tests.testcases import PackagesTestCase
 
 
-class PackageRulesTests(PackagesTestCase):
+class PackageRulesTests(SpyAgency, PackagesTestCase):
     """Unit tests for rbpkg.repository.package.PackageRules."""
 
     def test_deserialize_with_all_info(self):
@@ -136,3 +141,139 @@ class PackageRulesTests(PackagesTestCase):
                     'echo uninstall',
                 ],
             })
+
+    def test_matches_version_with_wildcard(self):
+        """Testing PackageRules.matches_version with wildcard (*)"""
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            created_timestamp=datetime(2015, 10, 11, 8, 17, 29, 958569),
+            last_updated_timestamp=datetime(2015, 10, 12, 8, 17, 29, 958569))
+        channel._loaded = True
+
+        rules = PackageRules(channel=channel,
+                             version_range='*',
+                             package_type='python',
+                             package_name='TestPackage',
+                             systems=['*'])
+        channel._package_rules = [rules]
+
+        self.assertTrue(rules.matches_version('1.0',
+                                              require_current_system=False))
+
+    def test_matches_version_with_exact_version(self):
+        """Testing PackageRules.matches_version with exact version"""
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            created_timestamp=datetime(2015, 10, 11, 8, 17, 29, 958569),
+            last_updated_timestamp=datetime(2015, 10, 12, 8, 17, 29, 958569))
+        channel._loaded = True
+
+        rules = PackageRules(channel=channel,
+                             version_range='1.0',
+                             package_type='python',
+                             package_name='TestPackage',
+                             systems=['*'])
+        channel._package_rules = [rules]
+
+        self.assertTrue(rules.matches_version('1.0',
+                                              require_current_system=False))
+
+    def test_matches_version_with_range(self):
+        """Testing PackageRules.matches_version with version range"""
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            created_timestamp=datetime(2015, 10, 11, 8, 17, 29, 958569),
+            last_updated_timestamp=datetime(2015, 10, 12, 8, 17, 29, 958569))
+        channel._loaded = True
+
+        rules = PackageRules(channel=channel,
+                             version_range='>=1.0,<=2.0',
+                             package_type='python',
+                             package_name='TestPackage',
+                             systems=['*'])
+        channel._package_rules = [rules]
+
+        self.assertTrue(rules.matches_version('1.0',
+                                              require_current_system=False))
+
+    def test_matches_version_without_match(self):
+        """Testing PackageRules.matches_version without match"""
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            created_timestamp=datetime(2015, 10, 11, 8, 17, 29, 958569),
+            last_updated_timestamp=datetime(2015, 10, 12, 8, 17, 29, 958569))
+        channel._loaded = True
+
+        rules = PackageRules(channel=channel,
+                             version_range='>=2.0',
+                             package_type='python',
+                             package_name='TestPackage',
+                             systems=['*'])
+        channel._package_rules = [rules]
+
+        self.assertFalse(rules.matches_version('1.0',
+                                               require_current_system=False))
+
+    def test_matches_version_with_require_current_system_match(self):
+        """Testing PackageRules.matches_version with
+        require_current_system=True
+        """
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            created_timestamp=datetime(2015, 10, 11, 8, 17, 29, 958569),
+            last_updated_timestamp=datetime(2015, 10, 12, 8, 17, 29, 958569))
+        channel._loaded = True
+
+        rules = PackageRules(channel=channel,
+                             version_range='*',
+                             package_type='python',
+                             package_name='TestPackage',
+                             systems=['MyDistro>=1.2.3'])
+        channel._package_rules = [rules]
+
+        self.spy_on(platform.system, call_fake=lambda: 'Linux')
+        self.spy_on(platform.dist, call_fake=lambda: ('MyDistro', '1.3', ''))
+
+        self.assertTrue(rules.matches_version('1.0',
+                                              require_current_system=True))
+
+    def test_matches_version_with_require_current_system_no_match(self):
+        """Testing PackageRules.matches_version with
+        require_current_system=True and no match
+        """
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            created_timestamp=datetime(2015, 10, 11, 8, 17, 29, 958569),
+            last_updated_timestamp=datetime(2015, 10, 12, 8, 17, 29, 958569))
+        channel._loaded = True
+
+        rules = PackageRules(channel=channel,
+                             version_range='*',
+                             package_type='python',
+                             package_name='TestPackage',
+                             systems=['MyDistro>=2.3.4'])
+        channel._package_rules = [rules]
+
+        self.spy_on(platform.system, call_fake=lambda: 'Linux')
+        self.spy_on(platform.dist, call_fake=lambda: ('MyDistro', '1.3', ''))
+
+        self.assertFalse(rules.matches_version('1.0',
+                                               require_current_system=True))

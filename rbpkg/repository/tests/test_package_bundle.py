@@ -218,3 +218,45 @@ class PackageBundleTests(PackagesTestCase):
                     },
                 ]
             })
+
+    def test_current_channel(self):
+        """Testing PackageBundle.current_channel"""
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+        bundle._loaded = True
+
+        channel1 = PackageChannel(
+            bundle=bundle,
+            name='beta',
+            current=False,
+            visible=True,
+            manifest_url='beta.json')
+        channel2 = PackageChannel(
+            bundle=bundle,
+            name='1.0.x',
+            current=True,
+            visible=True,
+            manifest_url='1.0.x.json')
+        channel3 = PackageChannel(
+            bundle=bundle,
+            name='0.5.x',
+            current=False,
+            visible=True,
+            manifest_url='0.5.x.json')
+        bundle._channels = [channel1, channel2, channel3]
+
+        self.assertEqual(bundle.current_channel, channel2)
+
+    def test_current_channel_with_no_current(self):
+        """Testing PackageBundle.current_channel with no current channel"""
+        bundle = PackageBundle(manifest_url='packages/TestPackage/index.json')
+        bundle._loaded = True
+
+        channel = PackageChannel(
+            bundle=bundle,
+            name='staging',
+            current=False,
+            visible=False,
+            manifest_url='staging.json')
+        bundle._channels = [channel]
+
+        self.assertEqual(bundle.current_channel, None)
