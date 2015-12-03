@@ -7,3 +7,7 @@ class ConfigurationError(Exception):
 
 class LoadDataError(IOError):
     """Error loading or parsing data from the repository."""
+
+
+class PackageLookupError(Exception):
+    """Error looking up a package."""

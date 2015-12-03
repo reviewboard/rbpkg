@@ -1,5 +1,8 @@
 from __future__ import unicode_literals
 
+import six
+
+from rbpkg.repository.errors import LoadDataError, PackageLookupError
 from rbpkg.repository.loaders import get_data_loader
 from rbpkg.repository.package_bundle import PackageBundle
 from rbpkg.repository.package_index import PackageIndex
@@ -14,6 +17,8 @@ class PackageRepository(object):
     This provides an API to look up and manage packages living on the
     package repository.
     """
+
+    BASE_PATH = '/packages/'
 
     def __init__(self):
         self._package_bundle_cache = {}
@@ -57,9 +62,16 @@ class PackageRepository(object):
 
         if package_bundle is None:
             path = self._build_package_bundle_path(name)
-            package_bundle_data = get_data_loader().load_by_path(path)
-            package_bundle = \
-                PackageBundle.deserialize(path, package_bundle_data)
+
+            try:
+                package_bundle_data = get_data_loader().load_by_path(path)
+            except LoadDataError as e:
+                raise PackageLookupError(six.text_type(e))
+
+            package_bundle = PackageBundle.deserialize(
+                base_url=self.BASE_PATH,
+                manifest_url=path,
+                data=package_bundle_data)
 
             self._package_bundle_cache[name] = package_bundle
 
@@ -76,7 +88,7 @@ class PackageRepository(object):
             unicode:
             The path to the bundle within the repository.
         """
-        return 'packages/%s/index.json' % name
+        return '%s%s/index.json' % (self.BASE_PATH, name)
 
     def _build_package_index_path(self):
         """Build the path to the main package index.
@@ -85,7 +97,7 @@ class PackageRepository(object):
             unicode:
             The path to the main package index within the repository.
         """
-        return 'packages/index.json'
+        return '%sindex.json' % self.BASE_PATH
 
 
 def get_repository():
